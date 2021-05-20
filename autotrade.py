@@ -21,20 +21,20 @@ def get_ma30(ticker):
     ma30 = df['close'].rolling(30).mean().iloc[-1]
     return ma30
 
-def get_ma90(ticker):
-    df = pyupbit.get_ohlcv(ticker, interval="minute5", count=90)
-    ma90 = df['close'].rolling(90).mean().iloc[-1]
-    return ma90
+def get_ma60(ticker):
+    df = pyupbit.get_ohlcv(ticker, interval="minute5", count=60)
+    ma60 = df['close'].rolling(60).mean().iloc[-1]
+    return ma60
 
-def get_ma180(ticker):
-    df = pyupbit.get_ohlcv(ticker, interval="minute5", count=180)
-    ma180 = df['close'].rolling(180).mean().iloc[-1]
-    return ma180
+def get_ma120(ticker):
+    df = pyupbit.get_ohlcv(ticker, interval="minute5", count=120)
+    ma120 = df['close'].rolling(120).mean().iloc[-1]
+    return ma120
 
-def get_before_ma180(ticker):
-    df = pyupbit.get_ohlcv(ticker, interval="minute5", count=181)
-    ma180 = df['close'].rolling(180).mean().iloc[-2]
-    return ma180
+def get_before_ma120(ticker):
+    df = pyupbit.get_ohlcv(ticker, interval="minute5", count=121)
+    ma120 = df['close'].rolling(120).mean().iloc[-2]
+    return ma120
 
 def get_before_slowd(ticker):
     df = pyupbit.get_ohlcv(ticker, interval="minute5")
@@ -69,23 +69,23 @@ print("autotrade start")
 while True:
     try:
         ma30 = get_ma30("KRW-DOGE")
-        ma90 = get_ma90("KRW-DOGE")
-        ma180 = get_ma180("KRW-DOGE")
-        beforema180 = get_before_ma180("KRW-DOGE")
+        ma60 = get_ma60("KRW-DOGE")
+        ma120 = get_ma120("KRW-DOGE")
+        beforema120 = get_before_ma120("KRW-DOGE")
         before_slowd = get_before_slowd("KRW-DOGE")
         slowd = get_slowd("KRW-DOGE")
         current_price = get_current_price("KRW-DOGE")
 
-        if  (beforema180 < ma180) and (slowd >= 20) and (before_slowd < 20) and\
-            (ma30 < current_price) and (ma90 < current_price) and (ma180 < current_price):
+        if  (beforema120 < ma120) and (slowd >= 25) and (before_slowd < 25) and\
+            (ma60 < current_price) and (ma120 < current_price):
              krw = get_balance("KRW")
              if krw > 5000:
                  upbit.buy_market_order("KRW-DOGE", krw*0.9995)
-        elif (slowd >= 70) and (before_slowd < 70):
+        elif slowd >= 70:
             doge = get_balance("DOGE")
             if doge > 0.00008:
                 upbit.sell_market_order("KRW-DOGE", doge*0.9995)
-        elif (current_price < ma30) and (current_price < ma90) and (current_price < ma180):
+        elif (current_price < ma30) and (current_price < ma60) and (current_price < ma120):
             doge = get_balance("DOGE")
             if doge > 0.00008:
                 upbit.sell_market_order("KRW-DOGE", doge*0.9995)
