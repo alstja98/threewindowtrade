@@ -26,6 +26,11 @@ def get_ma10(ticker):
     ma10 = df['close'].rolling(10).mean().iloc[-1]
     return ma10
 
+def get_ma20(ticker):
+    df = pyupbit.get_ohlcv(ticker, interval="minute5", count=20)
+    ma10 = df['close'].rolling(20).mean().iloc[-1]
+    return ma10
+
 def get_before_ma30(ticker):
     df = pyupbit.get_ohlcv(ticker, interval="minute5", count=31)
     ma30 = df['close'].rolling(30).mean().iloc[-2]
@@ -69,6 +74,7 @@ print("autotrade start")
 while True:
     try:
         ma10 = get_ma10("KRW-ETH")
+        ma20 = get_ma20("KRW-ETH")
         ma30 = get_ma30("KRW-ETH")
         ma60 = get_ma60("KRW-ETH")
         ma120 = get_ma120("KRW-ETH")
@@ -82,8 +88,8 @@ while True:
             (ma60 < current_price) and (ma120 < current_price) and (ma10 < current_price) and (ma30 < current_price):
              krw = get_balance("KRW")
              if krw > 5000:
-                 upbit.buy_market_order("KRW-ETH", 10000)
-        elif current_price < ma10:
+                 upbit.buy_market_order("KRW-ETH", 5000)
+        elif current_price < ma20:
             doge = get_balance("ETH")
             if doge > 0.00008:
                 upbit.sell_market_order("KRW-ETH", doge)
